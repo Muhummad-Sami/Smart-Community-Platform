@@ -9,7 +9,8 @@ import { sendPasswordResetEmail } from '../services/emailService'
 export const register = async (req: Request, res: Response) => {
   try {
     // ✅ Get role from request body, default to 'USER'
-    const { email, password, fullName, username, role } = req.body
+    const { password, fullName, username, role } = req.body
+    const email = req.body.email?.trim().toLowerCase()
 
     const existingUser = await prisma.user.findFirst({
       where: {
@@ -68,7 +69,8 @@ export const register = async (req: Request, res: Response) => {
 // Login
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body
+    const { password } = req.body
+    const email = req.body.email?.trim().toLowerCase()
 
     const user = await prisma.user.findUnique({
       where: { email }
@@ -177,7 +179,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 // Forgot Password
 export const forgotPassword = async (req: Request, res: Response) => {
   try {
-    const { email } = req.body
+    const email = req.body.email?.trim().toLowerCase()
 
     if (!email) {
       return res.status(400).json({
