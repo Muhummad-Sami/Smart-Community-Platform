@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.pnp
+.pnp.js
+
+# Environment Variables
+backend/.env
+backend/.env.local
+backend/.env.development.local
+backend/.env.test.local
+backend/.env.production.local
+
+frontend/.env.local
+frontend/.env.production
+# Next.js
+frontend/.next/
+frontend/out/
+
+# Backend Build
+backend/dist/
+backend/build/
+
+# Database
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Testing
+coverage/
+
+# Logs
+logs
+*.log
+
+# Misc
+.vercel

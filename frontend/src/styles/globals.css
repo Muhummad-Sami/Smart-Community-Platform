@@ -1,0 +1,875 @@
+/* Fonts are loaded via next/font/google in layout.tsx for optimal performance */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* ============================================================
+ DESIGN TOKENS — Cream + Forest Green Palette
+ Source: colorhunt.co/palette/fbf5dde7e1b1306d290d530e
+ ============================================================ */
+:root {
+  /* Backgrounds */
+  --bg-base: #FBF5DD;
+  /* Cream — page background */
+  --bg-surface: #E7E1B1;
+  /* Sand — card/section surface */
+  --bg-elevated: #FFFEF7;
+  /* Off-white — elevated panels */
+  --bg-overlay: rgba(13, 83, 14, 0.55);
+
+  /* Brand Greens */
+  --primary-900: #0D530E;
+  /* Dark forest green — headings, navbar bg */
+  --primary-800: #306D29;
+  /* Forest green — buttons, icons, links */
+  --primary-700: #1a4418;
+  /* Mid dark green */
+  --primary-500: #306D29;
+  /* Main interactive green */
+
+  /* Cream palette */
+  --cream-50: #FFFEF7;
+  --cream-100: #FBF5DD;
+  --cream-200: #F5ECC8;
+  --cream-300: #EDE3AA;
+  --cream-400: #E7E1B1;
+
+  /* Interactive aliases */
+  --teal-500: #306D29;
+  --teal-600: #0D530E;
+
+  /* Accent (CTA buttons) */
+  --accent-500: #306D29;
+  --accent-600: #0D530E;
+
+  /* Text */
+  --text-primary: #0D530E;
+  --text-secondary: #306D29;
+  --text-muted: #7a8c6e;
+  --text-on-dark: #FBF5DD;
+
+  /* Borders */
+  --border: #D4CB87;
+  --border-hover: #306D29;
+
+  /* Glow */
+  --glow-green: rgba(48, 109, 41, 0.25);
+  --glow-teal: rgba(48, 109, 41, 0.25);
+
+  /* Status colors */
+  --red-500: #c0392b;
+  --green-500: #306D29;
+}
+
+/* ============================================================
+ BASE RESET
+ ============================================================ */
+@layer base {
+
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+  }
+
+  body {
+    font-family: var(--font-inter, 'Inter', system-ui, -apple-system, sans-serif);
+    background-color: var(--bg-base);
+    /* #FBF5DD cream */
+    color: var(--text-primary);
+    /* #0D530E dark green */
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--primary-900);
+    /* #0D530E dark forest green */
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--primary-800);
+    transition: color 0.2s ease;
+  }
+
+  /* Plain link hover — buttons override this with !important in @layer components */
+  a:hover {
+    color: var(--primary-900);
+  }
+
+  /* Scrollbar — sand track, green thumb */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-base);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--primary-800);
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-900);
+  }
+
+  /* Selection — cream text on green */
+  ::selection {
+    background: rgba(48, 109, 41, 0.25);
+    color: var(--primary-900);
+  }
+}
+
+/* ============================================================
+ COMPONENT CLASSES
+ ============================================================ */
+@layer components {
+
+  /* --- Semantic utility aliases for CSS vars --- */
+  .bg-bg-base {
+    background-color: var(--bg-base);
+  }
+
+  .bg-bg-surface {
+    background-color: var(--bg-surface);
+  }
+
+  .bg-bg-elevated {
+    background-color: var(--bg-elevated);
+  }
+
+  .text-text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-text-muted {
+    color: var(--text-muted);
+  }
+
+  .border-border {
+    border-color: var(--border);
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     GLOBAL THEME FIX: ensure legacy text-white / bg-white
+     inside light-surface containers are readable.
+     The Tailwind override maps white=#FBF5DD (cream) which is
+     invisible on sand/cream backgrounds.
+  ───────────────────────────────────────────────────────── */
+
+  /* Text inside light containers → dark green */
+  .card .text-white,
+  .glass .text-white,
+  .glass-card .text-white,
+  .stat-card .text-white,
+  .card h1,
+  .card h2,
+  .card h3,
+  .glass h1,
+  .glass h2,
+  .glass h3,
+  .stat-card h1,
+  .stat-card h2,
+  .stat-card h3 {
+    color: var(--primary-900) !important;
+  }
+
+  /* Gray text inside containers → primary-800 */
+  .card .text-gray-600,
+  .glass .text-gray-600,
+  .stat-card .text-gray-600,
+  .card .text-gray-500,
+  .glass .text-gray-500,
+  .card .text-gray-400,
+  .glass .text-gray-400 {
+    color: #306D29 !important;
+  }
+
+  /* bg-white inside containers → elevated off-white */
+  .card .bg-white,
+  .glass .bg-white,
+  .stat-card .bg-white {
+    background-color: #FFFEF7 !important;
+  }
+
+  /* Hover text: hover:text-white inside nav → cream (correct) */
+  /* hover:text-white inside light containers → dark green */
+  .card .hover\:text-white:hover,
+  .glass .hover\:text-white:hover {
+    color: var(--primary-900) !important;
+  }
+
+  /* hover:bg-gray-100 inside light containers → sand */
+  .card .hover\:bg-gray-100:hover,
+  .glass .hover\:bg-gray-100:hover {
+    background-color: #E7E1B1 !important;
+  }
+
+  /* min-h-screen top-level: body-level text-white → dark green */
+  .min-h-screen>.text-center>.text-white,
+  .min-h-screen>div>.text-center>.text-white {
+    color: var(--primary-900) !important;
+  }
+
+  /* --- Gradient Text — Forest Green --- */
+  .gradient-text {
+    background: linear-gradient(135deg, #306D29 0%, #0D530E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-blue {
+    background: linear-gradient(135deg, #306D29, #0D530E);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* --- Solid Surface (Sand) --- */
+  .glass {
+    background: var(--bg-surface);
+    /* #E7E1B1 sand */
+    border: 1px solid var(--border);
+    /* #D4CB87 warm gold */
+  }
+
+  .glass-card {
+    @apply glass rounded-2xl p-6;
+    background: #E7E1B1;
+    box-shadow: 0 4px 16px rgba(13, 83, 14, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    will-change: transform;
+  }
+
+  .glass-card:hover {
+    transform: translateY(-2px) translateZ(0);
+    border-color: #306D29;
+    box-shadow: 0 12px 28px rgba(13, 83, 14, 0.14);
+  }
+
+  /* --- Buttons --- */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #306D29 !important;
+    /* Forest green */
+    color: #FBF5DD !important;
+    /* Cream text — !important beats global a:hover */
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+    will-change: transform;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active {
+    background: #0D530E !important;
+    /* Darker green */
+    color: #FBF5DD !important;
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 0 8px 16px rgba(48, 109, 41, 0.30);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.97) translateZ(0);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: transparent !important;
+    color: #306D29 !important;
+    /* Forest green text — !important beats global a:hover */
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: 1.5px solid #306D29;
+    /* Green border */
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover,
+  .btn-secondary:focus {
+    background: #306D29 !important;
+    color: #FBF5DD !important;
+    /* Cream text on hover — !important beats global a:hover */
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(48, 109, 41, 0.20);
+  }
+
+  .btn-secondary:active {
+    background: #306D29 !important;
+    color: #FBF5DD !important;
+    transform: scale(0.97);
+  }
+
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: var(--red-500) !important;
+    color: #FBF5DD !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .btn-danger:hover,
+  .btn-danger:focus,
+  .btn-danger:active {
+    color: #FBF5DD !important;
+    background: #922b21 !important;
+    text-decoration: none;
+  }
+
+  .btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(192, 57, 43, 0.25);
+  }
+
+  .btn-danger:active {
+    transform: scale(0.97);
+  }
+
+  .btn-success {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    background: #306D29 !important;
+    color: #FBF5DD !important;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+  }
+
+  .btn-success:hover,
+  .btn-success:focus,
+  .btn-success:active {
+    background: #0D530E !important;
+    color: #FBF5DD !important;
+    text-decoration: none;
+  }
+
+  .btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(48, 109, 41, 0.25);
+  }
+
+  .btn-success:active {
+    transform: scale(0.97);
+  }
+
+  /* --- Inputs --- */
+  .input-field {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: #FFFEF7;
+    /* Off-white */
+    border: 1.5px solid var(--border);
+    /* Sand border */
+    border-radius: 0.75rem;
+    color: #0D530E;
+    /* Dark green text */
+    font-size: 0.875rem;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .input-field::placeholder {
+    color: #7a8c6e;
+  }
+
+  .input-field:focus {
+    border-color: #306D29;
+    box-shadow: 0 0 0 3px rgba(48, 109, 41, 0.18);
+    background: #FFFEF7;
+  }
+
+  .input-field-error {
+    border-color: var(--red-500) !important;
+    box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.10) !important;
+  }
+
+  /* --- Cards — Sand surface --- */
+  .card {
+    @apply rounded-2xl overflow-hidden;
+    background: #E7E1B1;
+    /* Sand */
+    border: 1px solid #D4CB87;
+    /* Warm gold border */
+    box-shadow: 0 4px 16px rgba(13, 83, 14, 0.06);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    will-change: transform;
+  }
+
+  .card:hover {
+    transform: translateY(-2px) translateZ(0);
+    border-color: #306D29;
+    box-shadow: 0 12px 28px rgba(13, 83, 14, 0.12);
+  }
+
+  /* --- Badges --- */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    border-radius: 99px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .badge-primary {
+    @apply badge;
+    background: #306D29;
+    color: #FBF5DD;
+  }
+
+  .badge-success {
+    @apply badge;
+    background: rgba(48, 109, 41, 0.15);
+    color: #0D530E;
+  }
+
+  .badge-warning {
+    @apply badge;
+    background: rgba(212, 203, 135, 0.40);
+    color: #6b5d00;
+  }
+
+  .badge-danger {
+    @apply badge;
+    background: rgba(192, 57, 43, 0.15);
+    color: #922b21;
+  }
+
+  .badge-info {
+    @apply badge;
+    background: rgba(48, 109, 41, 0.10);
+    color: #306D29;
+  }
+
+  .badge-secondary {
+    @apply badge;
+    background: #E7E1B1;
+    border: 1px solid #D4CB87;
+    color: #306D29;
+  }
+
+  /* --- Stats --- */
+  .stat-card {
+    @apply rounded-2xl p-6 text-center;
+    background: #E7E1B1;
+    border: 1px solid #D4CB87;
+    box-shadow: 0 4px 12px rgba(13, 83, 14, 0.05);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(13, 83, 14, 0.10);
+  }
+
+  .stat-number {
+    @apply text-3xl md:text-4xl font-bold;
+    color: #0D530E;
+  }
+
+  .stat-label {
+    @apply text-sm mt-1;
+    color: #306D29;
+  }
+
+  /* --- Dropdown Items --- */
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.6rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #306D29;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .dropdown-item:hover {
+    color: #0D530E;
+    background: #E7E1B1;
+    /* Sand hover */
+  }
+
+  /* --- Nav Link --- */
+  .nav-link {
+    position: relative;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+
+  /* Ensure navbar hover text colors are never overridden by global a:hover */
+  nav a:hover {
+    color: inherit;
+  }
+
+  /* --- Section Containers --- */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-5xl font-bold text-center mb-3;
+    color: #0D530E;
+  }
+
+  .section-subtitle {
+    @apply text-base md:text-lg text-center max-w-2xl mx-auto mb-12;
+    color: #306D29;
+  }
+
+  /* --- Loading Spinner — Green --- */
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #E7E1B1;
+    border-top-color: #306D29;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  .spinner-sm {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #E7E1B1;
+    border-top-color: #306D29;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* --- Skeleton Loader --- */
+  .skeleton {
+    background: linear-gradient(90deg, #E7E1B1 25%, #F5ECC8 50%, #E7E1B1 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: 0.5rem;
+  }
+
+  /* --- Message status --- */
+  .message-status {
+    @apply text-xs ml-1;
+  }
+
+  .message-status-sent {
+    color: #7a8c6e;
+  }
+
+  .message-status-read {
+    color: #306D29;
+  }
+
+  /* --- Online dot --- */
+  .online-dot {
+    width: 10px;
+    height: 10px;
+    background: #306D29;
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(48, 109, 41, 0.4);
+  }
+
+  /* --- Search input --- */
+  .search-input {
+    @apply input-field;
+    padding-left: 2.75rem;
+  }
+}
+
+
+/* ============================================================
+ ANIMATIONS / KEYFRAMES
+ ============================================================ */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Animation utilities */
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out forwards;
+}
+
+/* ============================================================
+ FORM FIXES
+ ============================================================ */
+select option {
+  color: #111827;
+  background-color: #fff;
+}
+
+/* ============================================================
+ PAGE TRANSITION
+ ============================================================ */
+.page-enter {
+  animation: slideUp 0.2s ease-out forwards;
+}
+
+/* ============================================================
+ PERFORMANCE HELPERS
+ ============================================================ */
+/* GPU-accelerated layer for animated elements */
+.gpu {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dropdown shadow */
+.shadow-dropdown {
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.12), 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+/* ============================================================
+   BUTTON COLOR LOCK — outside @layer so it wins the cascade.
+   Fixes: text disappears on hover/click when <Link> uses btn-* classes
+   because global `a` and `a:hover` rules in @layer base override them.
+   These rules run AFTER all Tailwind layers and always win.
+   ============================================================ */
+
+/* btn-primary: green bg, cream text — all interaction states */
+a.btn-primary,
+button.btn-primary,
+.btn-primary {
+  background-color: #306D29 !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+a.btn-primary:hover,
+a.btn-primary:focus,
+a.btn-primary:active,
+button.btn-primary:hover,
+button.btn-primary:focus,
+button.btn-primary:active,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: #0D530E !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+
+/* btn-secondary: transparent bg + green border + green text; hover flips to green bg + cream text */
+a.btn-secondary,
+button.btn-secondary,
+.btn-secondary {
+  background-color: transparent !important;
+  color: #306D29 !important;
+  border-color: #306D29 !important;
+  text-decoration: none !important;
+}
+a.btn-secondary:hover,
+a.btn-secondary:focus,
+a.btn-secondary:active,
+button.btn-secondary:hover,
+button.btn-secondary:focus,
+button.btn-secondary:active,
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  background-color: #306D29 !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+
+/* btn-danger: red bg, cream text */
+a.btn-danger,
+button.btn-danger,
+.btn-danger {
+  background-color: #c0392b !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+a.btn-danger:hover,
+a.btn-danger:focus,
+a.btn-danger:active,
+button.btn-danger:hover,
+button.btn-danger:focus,
+button.btn-danger:active,
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+  background-color: #922b21 !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+
+/* btn-success: green bg, cream text */
+a.btn-success,
+button.btn-success,
+.btn-success {
+  background-color: #306D29 !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+a.btn-success:hover,
+a.btn-success:focus,
+a.btn-success:active,
+button.btn-success:hover,
+button.btn-success:focus,
+button.btn-success:active,
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active {
+  background-color: #0D530E !important;
+  color: #FBF5DD !important;
+  text-decoration: none !important;
+}
+
+/* Navbar links: always use inherit color so inline Tailwind classes win */
+nav a {
+  color: inherit;
+}
+nav a:hover {
+  color: inherit;
+}

@@ -1,0 +1,27 @@
+{
+  "name": "Smart Community Platform",
+  "short_name": "SmartComm",
+  "description": "Your trusted local community marketplace for services and products",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "shopping", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr"
+}
