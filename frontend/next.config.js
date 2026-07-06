@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // ✅ Add this for Vercel deployment
+  output: 'standalone',
+
   // Speed: Compress responses with gzip
   compress: true,
 
@@ -8,6 +11,12 @@ const nextConfig = {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
     domains: ['localhost', 'res.cloudinary.com', 'images.unsplash.com'],
+  },
+
+  // ✅ Add environment variables
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
   },
 
   // Speed: Experimental optimizations
