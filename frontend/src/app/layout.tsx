@@ -14,6 +14,9 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') ?? 'https://smart-community-platform-n0gzj7tgy-muhummad-samis-projects.vercel.app'
+  ),
   title: {
     default: 'SmartCommunity – Local Marketplace & Services',
     template: '%s | SmartCommunity',

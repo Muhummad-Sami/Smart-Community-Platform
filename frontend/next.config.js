@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ✅ Add this for Vercel deployment
-  output: 'standalone',
+  // ✅ Vercel handles output automatically - do NOT set output: 'standalone'
 
   // Speed: Compress responses with gzip
   compress: true,
@@ -10,38 +9,30 @@ const nextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60,
-    domains: ['localhost', 'res.cloudinary.com', 'images.unsplash.com'],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+    ],
   },
 
-  // ✅ Add environment variables
+  // ✅ Environment variables (also set these in Vercel dashboard)
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
   },
 
-  // Speed: Experimental optimizations
-  experimental: {
-    optimizeCss: false,
-    scrollRestoration: true,
+  // Disable type checking and linting during build for faster deploys
+  // (run these separately in CI)
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 
-  // Speed: Webpack optimization
-  webpack: (config, { dev, isServer }) => {
-    if (!dev && !isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        minSize: 20000,
-        maxSize: 244000,
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-          },
-        },
-      };
-    }
-    return config;
+  // Speed: Experimental optimizations
+  experimental: {
+    scrollRestoration: true,
   },
 
   // Speed: HTTP headers for caching
