@@ -24,7 +24,7 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     return true
   } catch (error) {
     console.error('Email error:', error)
-    return false
+    throw error
   }
 }
 

@@ -218,11 +218,11 @@ export const forgotPassword = async (req: Request, res: Response) => {
       message: 'Password reset email sent. Please check your inbox.'
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Forgot password error:', error)
     return res.status(500).json({
       success: false,
-      error: 'Failed to process request'
+      error: error.message || 'Failed to process request'
     })
   }
 }
