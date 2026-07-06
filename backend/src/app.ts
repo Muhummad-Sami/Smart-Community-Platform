@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import healthRoutes from './routes/healthRoutes'  // ✅ Add this
 import authRoutes from './routes/authRoutes'
 import productRoutes from './routes/productRoutes'
 import serviceRoutes from './routes/serviceRoutes'
@@ -20,41 +21,17 @@ import calendarRoutes from './routes/calendarRoutes'
 
 const app = express()
 
-// ✅ FIXED CORS - Allow all origins in development
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'https://smart-community-platform.vercel.app',
-  'https://smart-community.vercel.app',
-  process.env.FRONTEND_URL || 'http://localhost:3000'
-].filter(Boolean)
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) {
-      return callback(null, true)
-    }
-    
-    // In development, allow all origins
-    if (process.env.NODE_ENV === 'development') {
-      return callback(null, true)
-    }
-    
-    // In production, check against allowed origins
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      console.log('🚫 Blocked origin:', origin)
-      // ✅ Allow anyway in development
-      callback(null, true)
-    }
-  },
+// CORS
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://smart-community-platform.vercel.app', 'https://smart-community.vercel.app']
+    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}))
+}
+
+app.use(cors(corsOptions))
 
 app.use(helmet({
   crossOriginResourcePolicy: false,
@@ -68,6 +45,10 @@ app.use('/api/payments/webhook', express.raw({ type: 'application/json' }))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
+// ✅ Health check route
+app.use('/api', healthRoutes)  // This makes /api/health and /health work
+
+// API Routes
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
 app.use('/api/services', serviceRoutes)
@@ -84,8 +65,8 @@ app.use('/api/qr', qrRoutes)
 app.use('/api/analytics', analyticsRoutes)
 app.use('/api/calendar', calendarRoutes)
 
-// Health check
-app.get('/health', (_, res) => {
+// ✅ Additional health check (for root level)
+app.get('/health', (_req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -93,11 +74,11 @@ app.get('/health', (_, res) => {
   })
 })
 
-app.get('/api/test', (_, res) => {
+app.get('/api/test', (_req, res) => {
   res.json({ success: true, message: 'API is working!' })
 })
 
-app.use((_, res) => {
+app.use((_req, res) => {
   res.status(404).json({ success: false, error: 'Route not found' })
 })
 
