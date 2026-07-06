@@ -22,16 +22,40 @@ import calendarRoutes from './routes/calendarRoutes'
 const app = express()
 
 // CORS
+const allowedOrigins = [
+  // Local development
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002',
+  // Production Vercel domains (exact matches)
+  'https://smart-community-platform-six.vercel.app',
+  'https://smart-community-platform.vercel.app',
+  'https://smart-community.vercel.app',
+]
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? ['https://smart-community-platform.vercel.app', 'https://smart-community.vercel.app']
-    : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002'],
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    // Allow requests with no origin (mobile apps, Postman, curl)
+    if (!origin) return callback(null, true)
+
+    // Allow any *.vercel.app subdomain (handles preview deployments)
+    if (origin.endsWith('.vercel.app')) return callback(null, true)
+
+    // Allow explicitly listed origins
+    if (allowedOrigins.includes(origin)) return callback(null, true)
+
+    // Block everything else in production
+    console.warn(`❌ CORS blocked origin: ${origin}`)
+    return callback(new Error(`CORS policy: Origin ${origin} not allowed`))
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }
 
 app.use(cors(corsOptions))
+// Handle preflight for all routes
+app.options('*', cors(corsOptions))
 
 app.use(helmet({
   crossOriginResourcePolicy: false,

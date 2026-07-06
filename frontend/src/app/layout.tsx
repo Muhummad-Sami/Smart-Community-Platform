@@ -14,9 +14,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') ?? 'https://smart-community-platform-n0gzj7tgy-muhummad-samis-projects.vercel.app'
-  ),
+  metadataBase: new URL('https://smart-community-platform-six.vercel.app'),
   title: {
     default: 'SmartCommunity – Local Marketplace & Services',
     template: '%s | SmartCommunity',
@@ -28,17 +26,13 @@ export const metadata: Metadata = {
     description: 'Your trusted local community marketplace',
     type: 'website',
   },
-  // ✅ ADD THIS: Favicon configuration
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
       { url: '/favicon.svg', type: 'image/svg+xml' },
     ],
-    apple: [
-      { url: '/apple-touch-icon.png' },
-    ],
+    // apple-touch-icon removed — file does not exist
   },
-  // ✅ ADD THIS: Manifest
   manifest: '/manifest.json',
 }
 
