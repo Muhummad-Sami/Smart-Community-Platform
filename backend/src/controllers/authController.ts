@@ -310,6 +310,7 @@ export const getProfile = async (req: Request, res: Response) => {
         bio: true,
         location: true,
         phone: true,
+        skills: true,
         role: true,
         isVerified: true,
         emailVerified: true,

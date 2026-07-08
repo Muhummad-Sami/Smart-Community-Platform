@@ -18,7 +18,7 @@ export default function EditProfilePage() {
  bio: user?.bio || '',
  location: user?.location || '',
  phone: user?.phone || '',
- skills: (user as any)?.skills || '',
+ skills: user?.skills || '',
  })
 
  if (!user) {

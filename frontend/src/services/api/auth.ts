@@ -21,6 +21,7 @@ export interface User {
  bio?: string
  location?: string
  phone?: string
+ skills?: string
  role: string
  isVerified: boolean
  createdAt: string

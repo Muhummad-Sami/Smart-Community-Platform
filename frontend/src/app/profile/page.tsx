@@ -1,11 +1,26 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import Link from 'next/link'
 import { FaUser, FaEnvelope, FaMapMarkerAlt, FaPhone, FaEdit, FaBox, FaTools, FaCalendarCheck, FaStar } from 'react-icons/fa'
+import api from '@/services/api/api'
 
 export default function ProfilePage() {
   const { user } = useAuth()
+  const [stats, setStats] = useState({ services: 0, bookings: 0, products: 0, reviews: 0 })
+
+  useEffect(() => {
+    if (user) {
+      const fetchStats = async () => {
+        try {
+          const response = await api.get('/users/profile/stats')
+          setStats(response.data.data)
+        } catch (error) {}
+      }
+      fetchStats()
+    }
+  }, [user])
 
   if (!user) {
     return (
@@ -56,10 +71,10 @@ export default function ProfilePage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
           {[
-            { icon: <FaBox />, label: 'Products', value: 0 },
-            { icon: <FaTools />, label: 'Services', value: 0 },
-            { icon: <FaCalendarCheck />, label: 'Bookings', value: 0 },
-            { icon: <FaStar />, label: 'Reviews', value: 0 },
+            { icon: <FaBox />, label: 'Products', value: stats.products || 0 },
+            { icon: <FaTools />, label: 'Services', value: stats.services || 0 },
+            { icon: <FaCalendarCheck />, label: 'Bookings', value: stats.bookings || 0 },
+            { icon: <FaStar />, label: 'Reviews', value: stats.reviews || 0 },
           ].map((s, i) => (
             <div key={i} className="stat-card">
               <div className="text-3xl mb-2 text-primary-500">{s.icon}</div>
@@ -77,7 +92,7 @@ export default function ProfilePage() {
               { icon: <FaUser className="text-primary-500 text-lg" />, label: 'Full Name', value: user.fullName },
               { icon: <FaEnvelope className="text-primary-500 text-lg" />, label: 'Email', value: user.email },
               { icon: <FaMapMarkerAlt className="text-primary-500 text-lg" />, label: 'Location', value: user.location || 'Not set' },
-              { icon: <FaPhone className="text-primary-500 text-lg" />, label: 'Phone', value: (user as any).phone || 'Not set' },
+              { icon: <FaPhone className="text-primary-500 text-lg" />, label: 'Phone', value: user.phone || 'Not set' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 p-3 bg-surface rounded-xl border border-border">
                 {item.icon}
@@ -95,11 +110,11 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {(user as any).skills && (
+            {user.skills && (
               <div className="p-3 bg-surface rounded-xl border border-border">
                 <div className="text-xs text-primary-800 font-medium uppercase tracking-wide mb-2">Skills</div>
                 <div className="flex flex-wrap gap-2">
-                  {((user as any).skills as string).split(',').map((skill: string, i: number) => (
+                  {user.skills.split(',').map((skill: string, i: number) => (
                     <span key={i} className="badge-primary">{skill.trim()}</span>
                   ))}
                 </div>
