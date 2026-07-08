@@ -189,12 +189,13 @@ export const getUserListings = async (req: Request, res: Response) => {
         orderBy: { createdAt: 'desc' },
       }),
       prisma.service.findMany({
-        where: { userId, availability: true },
+        where: { userId },  // All services, including unavailable ones
         select: {
           id: true,
           title: true,
           price: true,
           category: true,
+          availability: true,
           portfolioImages: true,
           createdAt: true,
         },

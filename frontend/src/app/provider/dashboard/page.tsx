@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/navigation'
 import api from '@/services/api/api'
 import { toast } from 'react-hot-toast'
-import { productService } from '@/services/api'
+import { productService, serviceService } from '@/services/api'
 
 export default function ProviderDashboard() {
   const router = useRouter()
@@ -20,11 +20,12 @@ export default function ProviderDashboard() {
   const [stats, setStats] = useState({ services: 0, bookings: 0, earnings: 0, reviews: 0, products: 0 })
   const [bookings, setBookings] = useState<any[]>([])
   const [myProducts, setMyProducts] = useState<any[]>([])
+  const [myServices, setMyServices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
   useEffect(() => {
-    if (user) { fetchStats(); fetchBookings(); fetchMyProducts() }
+    if (user) { fetchStats(); fetchBookings(); fetchListings() }
   }, [user])
 
   const fetchStats = async () => {
@@ -41,12 +42,13 @@ export default function ProviderDashboard() {
     } catch (error) {} finally { setLoading(false) }
   }
 
-  const fetchMyProducts = async () => {
+  const fetchListings = async () => {
     try {
       // Use the profile/listings endpoint which already filters by current user
       const response = await api.get('/users/profile/listings')
       const data = response.data.data || {}
       setMyProducts(data.products || [])
+      setMyServices(data.services || [])
     } catch (error) {}
   }
 
@@ -59,6 +61,20 @@ export default function ProviderDashboard() {
       toast.success('Product deleted')
     } catch {
       toast.error('Failed to delete product')
+    } finally {
+      setDeletingId(null)
+    }
+  }
+
+  const handleDeleteService = async (serviceId: string) => {
+    if (!confirm('Are you sure you want to delete this service?')) return
+    setDeletingId(serviceId)
+    try {
+      await serviceService.delete(serviceId)
+      setMyServices(prev => prev.filter(s => s.id !== serviceId))
+      toast.success('Service deleted')
+    } catch {
+      toast.error('Failed to delete service')
     } finally {
       setDeletingId(null)
     }
@@ -88,7 +104,7 @@ export default function ProviderDashboard() {
   }
 
   const statItems = [
-    { icon: <FaTools />, label: 'My Services', value: stats.services, color: 'from-primary-500 to-primary-600' },
+    { icon: <FaTools />, label: 'My Services', value: stats.services ?? myServices.length, color: 'from-primary-500 to-primary-600' },
     { icon: <FaBox />, label: 'My Products', value: stats.products ?? myProducts.length, color: 'from-primary-600 to-primary-700' },
     { icon: <FaCalendarCheck />, label: 'Bookings', value: stats.bookings, color: 'from-primary-400 to-primary-500' },
     { icon: <FaStar />, label: 'Reviews', value: stats.reviews, color: 'from-primary-700 to-primary-900' },
@@ -149,7 +165,7 @@ export default function ProviderDashboard() {
                   <FaArrowRight className="text-xs opacity-70" />
                 </Link>
                 <Link href="/services" className="btn-secondary w-full justify-between px-5">
-                  <span className="flex items-center gap-2"><FaTools /> My Services</span>
+                  <span className="flex items-center gap-2"><FaTools /> Browse Services</span>
                   <FaArrowRight className="text-xs opacity-70" />
                 </Link>
                 <Link href="/products" className="btn-secondary w-full justify-between px-5">
@@ -282,6 +298,95 @@ export default function ProviderDashboard() {
                       <button
                         onClick={() => handleDeleteProduct(product.id)}
                         disabled={deletingId === product.id}
+                        className="p-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors disabled:opacity-50"
+                        title="Delete"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </motion.div>
+
+        {/* My Services Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
+          className="card p-0 overflow-hidden mt-8"
+        >
+          <div className="p-6 border-b border-border flex items-center justify-between bg-surface">
+            <h3 className="text-lg font-semibold text-primary-900 flex items-center gap-2">
+              <FaTools className="text-primary-500" /> My Services
+            </h3>
+            <Link href="/create-listing" className="btn-primary px-4 py-2 text-sm flex items-center gap-2">
+              <FaPlus /> Add Service
+            </Link>
+          </div>
+
+          {myServices.length === 0 ? (
+            <div className="p-12 flex flex-col items-center justify-center text-center bg-background">
+              <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mb-4">
+                <FaTools className="text-2xl text-primary-500" />
+              </div>
+              <p className="text-primary-900 font-semibold mb-1">No services yet</p>
+              <p className="text-primary-800 text-sm mb-4">Create your first service listing to start offering services</p>
+              <Link href="/create-listing" className="btn-primary px-6 py-2 flex items-center gap-2">
+                <FaPlus /> Create Service
+              </Link>
+            </div>
+          ) : (
+            <div className="divide-y divide-border bg-background">
+              {myServices.map((service: any) => {
+                let firstImg: string | null = null
+                try {
+                  const imgs = typeof service.portfolioImages === 'string' ? JSON.parse(service.portfolioImages) : service.portfolioImages
+                  firstImg = Array.isArray(imgs) && imgs.length > 0 ? imgs[0] : null
+                } catch {}
+
+                return (
+                  <div key={service.id} className="flex items-center gap-4 p-4 hover:bg-surface/50 transition-colors">
+                    {/* Thumbnail */}
+                    <div className="w-16 h-16 rounded-xl overflow-hidden bg-surface border border-border flex-shrink-0">
+                      {firstImg
+                        ? <img src={firstImg} alt={service.title} className="w-full h-full object-cover" />
+                        : <div className="w-full h-full flex items-center justify-center"><FaTools className="text-primary-500 text-xl" /></div>
+                      }
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-primary-900 truncate">{service.title}</p>
+                      <div className="flex items-center gap-3 mt-1">
+                        <span className="text-primary-500 font-bold">${service.price}</span>
+                        <span className="badge-secondary">{service.category}</span>
+                        {service.availability
+                          ? <span className="badge-success">Available</span>
+                          : <span className="badge-danger">Unavailable</span>
+                        }
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <Link
+                        href={'/services/' + service.id}
+                        className="p-2 rounded-lg text-primary-800 hover:text-primary-900 hover:bg-surface transition-colors"
+                        title="View"
+                      >
+                        <FaEye />
+                      </Link>
+                      <Link
+                        href={'/services/' + service.id + '/edit'}
+                        className="p-2 rounded-lg text-primary-800 hover:text-primary-900 hover:bg-surface transition-colors"
+                        title="Edit"
+                      >
+                        <FaEdit />
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteService(service.id)}
+                        disabled={deletingId === service.id}
                         className="p-2 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors disabled:opacity-50"
                         title="Delete"
                       >
