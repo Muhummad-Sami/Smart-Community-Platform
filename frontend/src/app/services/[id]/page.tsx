@@ -108,6 +108,17 @@ export default function ServiceDetailsPage() {
  setShowBookingModal(true)
  }
 
+ const handleDelete = async () => {
+ if (!confirm('Are you sure you want to delete this service?')) return
+ try {
+ await serviceService.delete(service.id)
+ toast.success('Service deleted')
+ router.push('/services')
+ } catch (error) {
+ toast.error('Failed to delete service')
+ }
+ }
+
  if (loading) {
  return (
  <div className="min-h-screen flex items-center justify-center">
@@ -249,9 +260,14 @@ export default function ServiceDetailsPage() {
  ) : (
  <div className="space-y-2">
  <div className="text-xs text-center text-primary-800 font-medium py-1">This is your service</div>
- <Link href={`/services/${service.id}/edit`} className="btn-secondary w-full py-2 text-sm inline-flex items-center justify-center gap-2">
- ✏️ Edit Service
+ <div className="flex gap-2">
+ <Link href={`/services/${service.id}/edit`} className="btn-secondary flex-1 py-2 text-sm inline-flex items-center justify-center gap-2">
+ ✏️ Edit
  </Link>
+ <button onClick={handleDelete} className="btn-danger flex-1 py-2 text-sm inline-flex items-center justify-center gap-2">
+ 🗑️ Delete
+ </button>
+ </div>
  </div>
  )}
  </div>
