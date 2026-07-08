@@ -176,13 +176,14 @@ export const getUserListings = async (req: Request, res: Response) => {
 
     const [products, services] = await Promise.all([
       prisma.product.findMany({
-        where: { userId, isAvailable: true },
+        where: { userId },  // All products, including unavailable ones
         select: {
           id: true,
           title: true,
           price: true,
           images: true,
           category: true,
+          isAvailable: true,
           createdAt: true,
         },
         orderBy: { createdAt: 'desc' },

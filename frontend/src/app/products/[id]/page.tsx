@@ -53,6 +53,17 @@ export default function ProductDetailsPage() {
  toast.success(isFavorite ? 'Removed from favorites' : 'Added to favorites')
  }
 
+ const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this product?')) return
+    try {
+      await productService.delete(product.id)
+      toast.success('Product deleted')
+      router.push('/products')
+    } catch (error) {
+      toast.error('Failed to delete product')
+    }
+  }
+
  if (loading) {
  return (
  <div className="min-h-screen flex items-center justify-center">
@@ -84,7 +95,7 @@ export default function ProductDetailsPage() {
  animate={{ opacity: 1, y: 0 }}
  transition={{ duration: 0.6 }}
  >
- <Link href="/products" className="inline-flex items-center gap-2 text-gray-600 hover:text-white transition-colors mb-6">
+ <Link href="/products" className="inline-flex items-center gap-2 text-gray-600 hover:text-primary-900 transition-colors mb-6">
  <FaArrowLeft /> Back to Products
  </Link>
 
@@ -187,7 +198,7 @@ export default function ProductDetailsPage() {
  {user?.id === product.userId && (
  <div className="flex gap-3">
  <Link href={'/products/' + product.id + '/edit'} className="btn-secondary flex-1 text-center py-3">Edit</Link>
- <button className="btn-danger flex-1 py-3">Delete</button>
+ <button onClick={handleDelete} className="btn-danger flex-1 py-3">Delete</button>
  </div>
  )}
  </div>

@@ -129,7 +129,7 @@ export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params
     const userId = (req as any).user?.userId
-    const { title, description, price, category, condition, location, isAvailable } = req.body
+    const { title, description, price, category, condition, location, isAvailable, images } = req.body
 
     // Check if product exists
     const existingProduct = await prisma.product.findUnique({
@@ -162,6 +162,7 @@ export const updateProduct = async (req: Request, res: Response) => {
         condition: condition || existingProduct.condition,
         location: location || existingProduct.location,
         isAvailable: isAvailable !== undefined ? isAvailable : existingProduct.isAvailable,
+        ...(images !== undefined && { images }),
       },
       include: {
         user: {

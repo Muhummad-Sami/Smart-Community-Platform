@@ -101,6 +101,10 @@ export default function ServiceDetailsPage() {
  router.push('/login')
  return
  }
+ if (user.id === service?.userId) {
+ toast.error('You cannot book your own service')
+ return
+ }
  setShowBookingModal(true)
  }
 
@@ -136,7 +140,7 @@ export default function ServiceDetailsPage() {
  animate={{ opacity: 1, y: 0 }}
  transition={{ duration: 0.6 }}
  >
- <Link href="/services" className="inline-flex items-center gap-2 text-gray-600 hover:text-white transition-colors mb-6">
+ <Link href="/services" className="inline-flex items-center gap-2 text-primary-800 hover:text-primary-900 font-medium transition-colors mb-6">
  <FaArrowLeft /> Back to Services
  </Link>
 
@@ -230,16 +234,26 @@ export default function ServiceDetailsPage() {
  <p className="text-gray-600 text-sm">@{service.user?.username || 'provider'}</p>
 
  <div className="mt-4 space-y-3">
- {/* ✅ MESSAGE BUTTON - Now links to messages page */}
+ {user?.id !== service.userId && (
  <Link 
  href={`/messages?userId=${service.user.id}`}
  className="btn-secondary w-full py-2 text-sm inline-flex items-center justify-center gap-2"
  >
  <FaEnvelope /> Message
  </Link>
+ )}
+ {user?.id !== service.userId ? (
  <button onClick={handleBook} className="btn-primary w-full py-3 text-lg">
  <FaCalendarCheck className="inline mr-2" /> Book Now
  </button>
+ ) : (
+ <div className="space-y-2">
+ <div className="text-xs text-center text-primary-800 font-medium py-1">This is your service</div>
+ <Link href={`/services/${service.id}/edit`} className="btn-secondary w-full py-2 text-sm inline-flex items-center justify-center gap-2">
+ ✏️ Edit Service
+ </Link>
+ </div>
+ )}
  </div>
  </div>
 
